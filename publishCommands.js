@@ -1,8 +1,9 @@
 const discordClient = require('discord.js');
 const fs = require('fs');
 const path = require('path');
+const config = require('config');
 
-const appConfig = require('./config.json');
+const { token, appID, serverID } = config.get('discord');
 
 const commandFolderPath = path.join(__dirname, "commands");
 console.log(commandFolderPath);
@@ -21,14 +22,14 @@ commandFolders.forEach((folder) => {
     });
 });
 
-const rest = new discordClient.REST().setToken(appConfig.token);
+const rest = new discordClient.REST().setToken(token);
 
 (async () => {
     try {
         console.log(`Started refreshing ${commands.length} app (/) commands`);
 
         const data = await rest.put(
-            discordClient.Routes.applicationGuildCommands(appConfig.appID, appConfig.serverID),
+            discordClient.Routes.applicationGuildCommands(appID, serverID),
             { body: commands },
         );
 

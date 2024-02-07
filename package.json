@@ -9,9 +9,14 @@
   "author": "Gopikrishna S",
   "license": "ISC",
   "dependencies": {
+    "@discord-player/extractor": "^4.4.6",
     "axios": "^1.6.5",
+    "config": "^3.3.10",
+    "discord-player": "^6.6.7",
     "discord.js": "^14.14.1",
-    "express": "^4.18.2"
+    "ffmpeg": "^0.0.4",
+    "mediaplex": "^0.0.9",
+    "ytdl-core": "^4.11.5"
   },
   "devDependencies": {
     "eslint": "^8.56.0"

@@ -1,13 +1,36 @@
 const fs = require('fs');
 const path = require('path');
-
+const config = require('config');
 const discordClient = require('discord.js');
-const appConfig = require('./config.json');
+const { Player } = require('discord-player');
+const { token } = config.get('discord');
 
-const client = new discordClient.Client({ intents: [discordClient.GatewayIntentBits.Guilds] });
+const client = new discordClient.Client({
+    intents: [
+        discordClient.GatewayIntentBits.Guilds,
+        discordClient.GatewayIntentBits.GuildVoiceStates,
+    ],
+});
 client.commands = new discordClient.Collection();
-
 client.cooldowns = new discordClient.Collection();
+const player = new Player(client, {
+    ytdlOptions: {
+        quality: "highestaudio",
+        highWaterMark: 1 << 25,
+    },
+});
+player.events.on('playerStart', (queue, track) => {
+    console.log(`Started playing || ${track.title} ||`);
+});
+player.events.on('error', (error) => {
+    console.log(`General player error event: ${error.message}`);
+    console.error(error);
+});
+player.events.on('playerError', (error) => {
+    console.log(`Player error event: ${error.message}`);
+    console.error(error);
+});
+client.player = player;
 
 const commandFolderPath = path.join(__dirname, "commands");
 const commandFolders = fs.readdirSync(commandFolderPath);
@@ -37,4 +60,4 @@ events.forEach((eventFile) => {
     }
 });
 
-client.login(appConfig.token);
+client.login(token);

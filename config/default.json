@@ -1,0 +1,13 @@
+{
+    "discord": {
+        "token": "",
+        "serverID": "",
+        "appID": ""
+    },
+    "weather": {
+        "apiKey": "337ea78b315b4ab0aa5172911241301"
+    },
+    "defaultCooldownTime": {
+        "timeInSec": 5
+    }
+}

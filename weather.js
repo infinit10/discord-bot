@@ -1,12 +1,13 @@
 const axios = require('axios');
-const appConfig = require('./config.json');
+const config = require('config');
+const { apiKey } = config.get("weather");
 
 async function getWeatherByCity(params = {}) {
-    const { aqi = "no" } = params;
+    const { aqi = "no", search = "auto:ip" } = params;
     try {
         const url = new URL('/v1/current.json', 'http://api.weatherapi.com');
-        url.searchParams.append('key', appConfig.weather.apiKey);
-        url.searchParams.append('q', "auto:ip");
+        url.searchParams.append('key', apiKey);
+        url.searchParams.append('q', search);
         url.searchParams.append('aqi', aqi);
 
         const response = await axios({

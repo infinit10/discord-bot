@@ -1,10 +1,12 @@
 const { Events, Collection } = require('discord.js');
-const { defaultCooldownTime } = require('../config.json');
+const config = require('config');
+
+const { timeInSec } = config.get('defaultCooldownTime');
 
 module.exports = {
     name: Events.InteractionCreate,
     async execute(interaction) {
-        if (!interaction.isChatInputCommand()) return;
+        if (!interaction.isCommand()) return;
 
         const { cooldowns } = interaction.client;
 
@@ -21,8 +23,7 @@ module.exports = {
 
         const now = Date.now();
         const timestamp = cooldowns.get(command.data.name);
-        const cooldownTimeInMs = (command.cooldown || defaultCooldownTime) * 1000;
-
+        const cooldownTimeInMs = (command.cooldown || timeInSec) * 1000;
 
         if (timestamp.has(interaction.user.id)) {
             const expireTime = timestamp.get(interaction.user.id) + cooldownTimeInMs;
@@ -40,7 +41,6 @@ module.exports = {
             await command.execute(interaction);
         } catch (error) {
             console.error("Unexpected Error occured", error);
-
             if (interaction.replied || interaction.deferred) {
                 await interaction.followUp({ content: 'There was an error while executing this command!', ephemeral: true });
             } else {

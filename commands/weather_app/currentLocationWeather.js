@@ -1,5 +1,7 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+const config = require('config');
 const { getWeatherByCity } = require('../../weather');
+const { timeInSec } = config.get('defaultCooldownTime');
 
 function getEmbedObjectForResp(weatherInfo) {
     const { current, location } = weatherInfo;
@@ -10,7 +12,7 @@ function getEmbedObjectForResp(weatherInfo) {
     if (location.country) locationVals.push(location.country);
 
     return new EmbedBuilder()
-        .setTitle('Weather')
+        .setTitle('myweather')
         .setDescription('Weather Details powered by weatherapi.com')
         .setThumbnail(new URL(`https:${current.condition.icon}`).href)
         .addFields(
@@ -26,14 +28,16 @@ function getEmbedObjectForResp(weatherInfo) {
 }
 
 module.exports = {
-    cooldown: 10,
+    cooldown: timeInSec,
     data: new SlashCommandBuilder()
-        .setName("weather")
+        .setName("myweather")
         .setDescription("Lists weather info for the given city"),
     async execute(interaction) {
         try {
             const weatherInfo = await getWeatherByCity();
-            await interaction.reply({ embeds: [getEmbedObjectForResp(weatherInfo)] });
+            await interaction.reply({
+                embeds: [getEmbedObjectForResp(weatherInfo)],
+            });
         } catch (error) {
             if (error.message === "Invalid location name provided") {
                 await interaction.reply("Invalid location name provided");
